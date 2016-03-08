@@ -24,5 +24,11 @@ namespace SamplePushNotificationBroadcaster
     {
         [JsonProperty("aps")]
         public Aps Aps { get; set; }
+
+        [JsonProperty("jobId")]
+        public int JobId { get; set; }
+
+        [JsonProperty("userId")]
+        public int UserId { get; set; }
     }
 }

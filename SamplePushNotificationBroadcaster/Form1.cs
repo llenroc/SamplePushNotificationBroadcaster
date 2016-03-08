@@ -73,11 +73,13 @@ namespace SamplePushNotificationBroadcaster
                 broker.QueueNotification(new GcmNotification
                 {
                     RegistrationIds = new List<string> { txtDeviceToken.Text },
-                    Data = JObject.Parse(JsonConvert.SerializeObject(new
+                    Data = JObject.Parse(JsonConvert.SerializeObject(new GcmNotificationPayload
                     {
                         Title = txtTitle.Text,
                         Message = txtMessage.Text,
-                        Badge = txtBadge.Text
+                        Badge = txtBadge.Text,
+                        JobId = 7000,
+                        UserId = 100
                     }))
                 });
 
@@ -110,7 +112,9 @@ namespace SamplePushNotificationBroadcaster
                                 Title = txtTitle.Text
                             },
                             Badge = int.Parse(txtBadge.Text)
-                        }
+                        },
+                        JobId = 7000,
+                        UserId = 100
                     }))
                 });
 
