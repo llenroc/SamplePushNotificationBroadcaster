@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PushSharp.Apple;
 using PushSharp.Google;
+using PushSharp.Windows;
 using SamplePushNotificationBroadcaster.Properties;
 
 namespace SamplePushNotificationBroadcaster
@@ -16,6 +18,9 @@ namespace SamplePushNotificationBroadcaster
         private const string GcmSenderAuthToken = "AIzaSyBpSNEc5N3wdhzyGGDdZ5pZkOMzYqkJ7lA";
         private const string ApnsCertificateFile = @"\Resources\PushCertificates.p12";
         private const string ApnsCertificatePassword = "Welcome123";
+        private const string WnsClientSecret = "";
+        private const string WnsPackageSid = "";
+        private const string WnsPackageName = "";
 
         public Form1()
         {
@@ -91,6 +96,32 @@ namespace SamplePushNotificationBroadcaster
                 {
                     DeviceToken = txtDeviceToken.Text,
                     Payload = notificationPayload
+                });
+
+                progressBar1.Value += 5;
+                broker.Stop();
+            }
+            else if (rbWindows.Checked)
+            {
+                var config = new WnsConfiguration(WnsPackageName, WnsPackageSid, WnsClientSecret);
+                var broker = new WnsServiceBroker(config);
+
+                progressBar1.Value += 5;
+                broker.Start();
+
+                progressBar1.Value += 5;
+                broker.QueueNotification(new WnsToastNotification
+                {
+                    ChannelUri = txtDeviceToken.Text,
+                    Payload = XElement.Parse(@"
+                        <toast>
+                            <visual>
+                                <binding template=""ToastText01"">
+                                    <text id=""1"">WNS_Send_Single</text>
+                                </binding>  
+                            </visual>
+                        </toast>
+                    ")
                 });
 
                 progressBar1.Value += 5;
