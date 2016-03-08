@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Newtonsoft.Json;
@@ -18,9 +19,9 @@ namespace SamplePushNotificationBroadcaster
         private const string GcmSenderAuthToken = "AIzaSyBpSNEc5N3wdhzyGGDdZ5pZkOMzYqkJ7lA";
         private const string ApnsCertificateFile = @"\Resources\PushCertificates.p12";
         private const string ApnsCertificatePassword = "Welcome123";
-        private const string WnsClientSecret = "";
-        private const string WnsPackageSid = "";
-        private const string WnsPackageName = "";
+        private const string WnsClientSecret = "EoQkPkNuYTM7znX+UAGRyyeG0eTGDFtH";
+        private const string WnsPackageSid = "ms-app://s-1-15-2-1412280723-3910725469-679997538-3266902989-3194955833-4133533994-3874005050";
+        private const string WnsPackageName = "TeacherMatchLLC.SmartFindMobile";
 
         public Form1()
         {
@@ -69,6 +70,9 @@ namespace SamplePushNotificationBroadcaster
             {
                 var broker = new GcmServiceBroker(new GcmConfiguration(GcmSenderId, GcmSenderAuthToken, null));
 
+                broker.OnNotificationFailed += BrokerOnOnNotificationFailed;
+                broker.OnNotificationSucceeded += BrokerOnOnNotificationSucceeded;
+
                 progressBar1.Value += 5;
                 broker.Start();
 
@@ -88,14 +92,28 @@ namespace SamplePushNotificationBroadcaster
                 var config = new ApnsConfiguration(ApnsConfiguration.ApnsServerEnvironment.Production, certificateFilePath, ApnsCertificatePassword);
                 var broker = new ApnsServiceBroker(config);
 
+                broker.OnNotificationFailed += Broker_OnNotificationFailed;
+                broker.OnNotificationSucceeded += Broker_OnNotificationSucceeded;
+
                 progressBar1.Value += 5;
                 broker.Start();
 
                 progressBar1.Value += 5;
                 broker.QueueNotification(new ApnsNotification
                 {
-                    DeviceToken = txtDeviceToken.Text,
-                    Payload = notificationPayload
+                    DeviceToken = txtDeviceToken.Text.Replace(" ", string.Empty),
+                    Payload = JObject.Parse(JsonConvert.SerializeObject(new ApnsNotificationPayload
+                    {
+                        Aps = new Aps
+                        {
+                            Alert = new Alert
+                            {
+                                Body = txtMessage.Text,
+                                Title = txtTitle.Text
+                            },
+                            Badge = int.Parse(txtBadge.Text)
+                        }
+                    }))
                 });
 
                 progressBar1.Value += 5;
@@ -113,15 +131,13 @@ namespace SamplePushNotificationBroadcaster
                 broker.QueueNotification(new WnsToastNotification
                 {
                     ChannelUri = txtDeviceToken.Text,
-                    Payload = XElement.Parse(@"
-                        <toast>
+                    Payload = XElement.Parse(@"<toast>
                             <visual>
                                 <binding template=""ToastText01"">
                                     <text id=""1"">WNS_Send_Single</text>
                                 </binding>  
                             </visual>
-                        </toast>
-                    ")
+                        </toast>")
                 });
 
                 progressBar1.Value += 5;
@@ -134,6 +150,28 @@ namespace SamplePushNotificationBroadcaster
                 progressBar1.Value += 5;
             }
             progressBar1.Value = 100;
+        }
+
+        private void Broker_OnNotificationSucceeded(ApnsNotification notification)
+        {
+            Console.WriteLine(notification.DeviceToken, notification.Payload);
+        }
+
+        private void Broker_OnNotificationFailed(ApnsNotification notification, AggregateException exception)
+        {
+            Console.WriteLine(notification.DeviceToken, notification.Payload);
+            Console.WriteLine(exception.Message);
+        }
+
+        private void BrokerOnOnNotificationSucceeded(GcmNotification notification)
+        {
+            Console.WriteLine(notification.RegistrationIds?.FirstOrDefault() ?? string.Empty, notification.Notification);
+        }
+
+        private void BrokerOnOnNotificationFailed(GcmNotification notification, AggregateException exception)
+        {
+            Console.WriteLine(notification.RegistrationIds?.FirstOrDefault() ?? string.Empty, notification.Notification);
+            Console.WriteLine(exception.Message);
         }
     }
 }
