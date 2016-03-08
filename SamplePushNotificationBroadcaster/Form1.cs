@@ -59,13 +59,6 @@ namespace SamplePushNotificationBroadcaster
             progressBar1.Value = 5;
             progressBar1.Value += 5;
 
-            var notificationPayload = JObject.Parse(JsonConvert.SerializeObject(new
-            {
-                Title = txtTitle.Text,
-                Message = txtMessage.Text,
-                Badge = txtBadge.Text
-            }));
-
             if (rbAndroid.Checked)
             {
                 var broker = new GcmServiceBroker(new GcmConfiguration(GcmSenderId, GcmSenderAuthToken, null));
@@ -80,7 +73,12 @@ namespace SamplePushNotificationBroadcaster
                 broker.QueueNotification(new GcmNotification
                 {
                     RegistrationIds = new List<string> { txtDeviceToken.Text },
-                    Data = notificationPayload
+                    Data = JObject.Parse(JsonConvert.SerializeObject(new
+                    {
+                        Title = txtTitle.Text,
+                        Message = txtMessage.Text,
+                        Badge = txtBadge.Text
+                    }))
                 });
 
                 progressBar1.Value += 5;
