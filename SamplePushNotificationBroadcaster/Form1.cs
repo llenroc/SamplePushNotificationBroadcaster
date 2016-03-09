@@ -79,7 +79,7 @@ namespace SamplePushNotificationBroadcaster
                         Message = txtMessage.Text,
                         Badge = txtBadge.Text,
                         JobId = 7000,
-                        UserId = 100
+                        UserId = int.Parse(txtUserId.Text)
                     }))
                 });
 
@@ -114,7 +114,7 @@ namespace SamplePushNotificationBroadcaster
                             Badge = int.Parse(txtBadge.Text)
                         },
                         JobId = 7000,
-                        UserId = 100
+                        UserId = int.Parse(txtUserId.Text)
                     }))
                 });
 
