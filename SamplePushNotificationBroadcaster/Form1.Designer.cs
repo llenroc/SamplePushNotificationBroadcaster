@@ -44,6 +44,8 @@
             this.txtTitle = new System.Windows.Forms.TextBox();
             this.lblUserId = new System.Windows.Forms.Label();
             this.txtUserId = new System.Windows.Forms.TextBox();
+            this.lblJobId = new System.Windows.Forms.Label();
+            this.txtJobId = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnSend
@@ -66,7 +68,7 @@
             // rbAndroid
             // 
             this.rbAndroid.AutoSize = true;
-            this.rbAndroid.Location = new System.Drawing.Point(77, 185);
+            this.rbAndroid.Location = new System.Drawing.Point(73, 193);
             this.rbAndroid.Name = "rbAndroid";
             this.rbAndroid.Size = new System.Drawing.Size(61, 17);
             this.rbAndroid.TabIndex = 2;
@@ -77,7 +79,7 @@
             // rbiOS
             // 
             this.rbiOS.AutoSize = true;
-            this.rbiOS.Location = new System.Drawing.Point(77, 208);
+            this.rbiOS.Location = new System.Drawing.Point(73, 216);
             this.rbiOS.Name = "rbiOS";
             this.rbiOS.Size = new System.Drawing.Size(42, 17);
             this.rbiOS.TabIndex = 3;
@@ -88,7 +90,7 @@
             // rbWindows
             // 
             this.rbWindows.AutoSize = true;
-            this.rbWindows.Location = new System.Drawing.Point(77, 231);
+            this.rbWindows.Location = new System.Drawing.Point(73, 239);
             this.rbWindows.Name = "rbWindows";
             this.rbWindows.Size = new System.Drawing.Size(69, 17);
             this.rbWindows.TabIndex = 4;
@@ -109,7 +111,7 @@
             // lblPlatform
             // 
             this.lblPlatform.AutoSize = true;
-            this.lblPlatform.Location = new System.Drawing.Point(12, 189);
+            this.lblPlatform.Location = new System.Drawing.Point(8, 197);
             this.lblPlatform.Name = "lblPlatform";
             this.lblPlatform.Size = new System.Drawing.Size(45, 13);
             this.lblPlatform.TabIndex = 6;
@@ -186,11 +188,29 @@
             this.txtUserId.Size = new System.Drawing.Size(375, 20);
             this.txtUserId.TabIndex = 14;
             // 
+            // lblJobId
+            // 
+            this.lblJobId.AutoSize = true;
+            this.lblJobId.Location = new System.Drawing.Point(11, 170);
+            this.lblJobId.Name = "lblJobId";
+            this.lblJobId.Size = new System.Drawing.Size(38, 13);
+            this.lblJobId.TabIndex = 17;
+            this.lblJobId.Text = "Job ID";
+            // 
+            // txtJobId
+            // 
+            this.txtJobId.Location = new System.Drawing.Point(72, 167);
+            this.txtJobId.Name = "txtJobId";
+            this.txtJobId.Size = new System.Drawing.Size(375, 20);
+            this.txtJobId.TabIndex = 16;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 396);
+            this.Controls.Add(this.lblJobId);
+            this.Controls.Add(this.txtJobId);
             this.Controls.Add(this.lblUserId);
             this.Controls.Add(this.txtUserId);
             this.Controls.Add(this.lblTitle);
@@ -232,6 +252,8 @@
         private System.Windows.Forms.TextBox txtTitle;
         private System.Windows.Forms.Label lblUserId;
         private System.Windows.Forms.TextBox txtUserId;
+        private System.Windows.Forms.Label lblJobId;
+        private System.Windows.Forms.TextBox txtJobId;
     }
 }
 

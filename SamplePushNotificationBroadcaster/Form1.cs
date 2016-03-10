@@ -82,7 +82,7 @@ namespace SamplePushNotificationBroadcaster
                         Title = txtTitle.Text,
                         Message = txtMessage.Text,
                         Badge = txtBadge.Text,
-                        JobId = 7000,
+                        JobId = int.Parse(txtJobId.Text),
                         UserId = int.Parse(txtUserId.Text)
                     }))
                 });
@@ -117,7 +117,7 @@ namespace SamplePushNotificationBroadcaster
                             },
                             Badge = int.Parse(txtBadge.Text)
                         },
-                        JobId = 7000,
+                        JobId = int.Parse(txtJobId.Text),
                         UserId = int.Parse(txtUserId.Text)
                     }))
                 });
@@ -323,6 +323,6 @@ namespace SamplePushNotificationBroadcaster
             }
             return GetOAuthTokenFromJson(response);
         }
-
+        
     }
 }
