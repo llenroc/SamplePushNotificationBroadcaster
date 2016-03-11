@@ -117,4 +117,7 @@
   <data name="Enter_device_token_or_registationId" xml:space="preserve">
     <value>Enter device token or registationId</value>
   </data>
+  <data name="OnNotificationFailed_Notification_Failed" xml:space="preserve">
+    <value>Notification Failed</value>
+  </data>
 </root>

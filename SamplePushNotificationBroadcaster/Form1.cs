@@ -74,17 +74,18 @@ namespace SamplePushNotificationBroadcaster
                 broker.Start();
 
                 progressBar1.Value += 5;
+                var payload = JsonConvert.SerializeObject(new GcmNotificationPayload
+                {
+                    Title = txtTitle.Text,
+                    Message = txtMessage.Text,
+                    Badge = txtBadge.Text,
+                    JobId = int.Parse(txtJobId.Text),
+                    UserId = int.Parse(txtUserId.Text)
+                });
                 broker.QueueNotification(new GcmNotification
                 {
                     RegistrationIds = new List<string> { txtDeviceToken.Text },
-                    Data = JObject.Parse(JsonConvert.SerializeObject(new GcmNotificationPayload
-                    {
-                        Title = txtTitle.Text,
-                        Message = txtMessage.Text,
-                        Badge = txtBadge.Text,
-                        JobId = int.Parse(txtJobId.Text),
-                        UserId = int.Parse(txtUserId.Text)
-                    }))
+                    Data = JObject.Parse(payload)
                 });
 
                 progressBar1.Value += 5;
@@ -103,23 +104,24 @@ namespace SamplePushNotificationBroadcaster
                 broker.Start();
 
                 progressBar1.Value += 5;
+                var payload = JsonConvert.SerializeObject(new ApnsNotificationPayload
+                {
+                    Aps = new Aps
+                    {
+                        Alert = new Alert
+                        {
+                            Body = txtMessage.Text,
+                            Title = txtTitle.Text
+                        },
+                        Badge = int.Parse(txtBadge.Text)
+                    },
+                    JobId = int.Parse(txtJobId.Text),
+                    UserId = int.Parse(txtUserId.Text)
+                });
                 broker.QueueNotification(new ApnsNotification
                 {
                     DeviceToken = txtDeviceToken.Text.Replace(" ", string.Empty),
-                    Payload = JObject.Parse(JsonConvert.SerializeObject(new ApnsNotificationPayload
-                    {
-                        Aps = new Aps
-                        {
-                            Alert = new Alert
-                            {
-                                Body = txtMessage.Text,
-                                Title = txtTitle.Text
-                            },
-                            Badge = int.Parse(txtBadge.Text)
-                        },
-                        JobId = int.Parse(txtJobId.Text),
-                        UserId = int.Parse(txtUserId.Text)
-                    }))
+                    Payload = JObject.Parse(payload)
                 });
 
                 progressBar1.Value += 5;
@@ -165,16 +167,16 @@ namespace SamplePushNotificationBroadcaster
             progressBar1.Value = 100;
         }
 
-        private void BrokerOnOnNotificationSucceeded(WnsNotification notification)
-        {
-            Console.WriteLine(notification.ChannelUri, notification.Payload);
-        }
+        //private void BrokerOnOnNotificationSucceeded(WnsNotification notification)
+        //{
+        //    Console.WriteLine(notification.ChannelUri, notification.Payload);
+        //}
 
-        private void BrokerOnOnNotificationFailed(WnsNotification notification, AggregateException exception)
-        {
-            Console.WriteLine(notification.ChannelUri, notification.Payload);
-            Console.WriteLine(exception.Message);
-        }
+        //private void BrokerOnOnNotificationFailed(WnsNotification notification, AggregateException exception)
+        //{
+        //    Console.WriteLine(notification.ChannelUri, notification.Payload);
+        //    Console.WriteLine(exception.Message);
+        //}
 
         private void Broker_OnNotificationSucceeded(ApnsNotification notification)
         {
@@ -185,6 +187,7 @@ namespace SamplePushNotificationBroadcaster
         {
             Console.WriteLine(notification.DeviceToken, notification.Payload);
             Console.WriteLine(exception.Message);
+            MessageBox.Show(exception.Message, Resources.OnNotificationFailed_Notification_Failed);
         }
 
         private void BrokerOnOnNotificationSucceeded(GcmNotification notification)
@@ -196,6 +199,7 @@ namespace SamplePushNotificationBroadcaster
         {
             Console.WriteLine(notification.RegistrationIds?.FirstOrDefault() ?? string.Empty, notification.Notification);
             Console.WriteLine(exception.Message);
+            MessageBox.Show(exception.Message, Resources.OnNotificationFailed_Notification_Failed);
         }
 
         // Post to WNS
@@ -282,9 +286,10 @@ namespace SamplePushNotificationBroadcaster
                 return string.Join(" | ", debugOutput);
             }
 
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                return "EXCEPTION: " + ex.Message;
+                MessageBox.Show(exception.Message, Resources.OnNotificationFailed_Notification_Failed);
+                return "EXCEPTION: " + exception.Message;
             }
 
             return string.Empty;

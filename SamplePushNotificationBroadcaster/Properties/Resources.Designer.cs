@@ -68,5 +68,14 @@ namespace SamplePushNotificationBroadcaster.Properties {
                 return ResourceManager.GetString("Enter_device_token_or_registationId", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notification Failed.
+        /// </summary>
+        internal static string OnNotificationFailed_Notification_Failed {
+            get {
+                return ResourceManager.GetString("OnNotificationFailed_Notification_Failed", resourceCulture);
+            }
+        }
     }
 }
