@@ -1,6 +1,6 @@
 ﻿namespace SamplePushNotificationBroadcaster
 {
-    partial class Form1
+    partial class Form
     {
         /// <summary>
         /// Required designer variable.
@@ -204,7 +204,7 @@
             this.txtJobId.Size = new System.Drawing.Size(375, 20);
             this.txtJobId.TabIndex = 16;
             // 
-            // Form1
+            // Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -227,8 +227,9 @@
             this.Controls.Add(this.rbAndroid);
             this.Controls.Add(this.txtDeviceToken);
             this.Controls.Add(this.btnSend);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.MaximizeBox = false;
+            this.Name = "Form";
+            this.Text = "SamplePushNotificationBroadcaster";
             this.ResumeLayout(false);
             this.PerformLayout();
 
