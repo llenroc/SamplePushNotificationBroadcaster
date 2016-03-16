@@ -130,12 +130,12 @@ namespace SamplePushNotificationBroadcaster
             }
             else if (rbWindows.Checked)
             {
-                var notificationXMLString = @"<toast launch=''>
+                var notificationXmlString = @"<toast launch=''>
                                               <visual lang='en-US'>
                                                 <binding template='ToastImageAndText02'>
                                                   <image id='1' src='World' />
-                                                  <text id='1'>Hello</text>
-                                                  <text id='2'>Rohit</text>
+                                                  <text id='1'>" + txtTitle.Text + @"</text>
+                                                  <text id='2'>" + txtMessage.Text + @"</text>
                                                 </binding>
                                               </visual>
                                             </toast>";
@@ -153,7 +153,7 @@ namespace SamplePushNotificationBroadcaster
                 broker.QueueNotification(new WnsToastNotification
                 {
                     ChannelUri = txtDeviceToken.Text,
-                    Payload = XElement.Parse(notificationXMLString)
+                    Payload = XElement.Parse(notificationXmlString)
                 });
 
                 progressBar1.Value += 5;
