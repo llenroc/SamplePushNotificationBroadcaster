@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Web;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using Newtonsoft.Json;
@@ -130,13 +131,14 @@ namespace SamplePushNotificationBroadcaster
             else if (rbWindows.Checked)
             {
                 var notificationXMLString = @"<toast launch=''>
-                                                  <visual lang='en-US'>
-                                                    <binding template='ToastImageAndText01'>
-                                                      <image id='1' src='World' />
-                                                      <text id='1'>Hello</text>
-                                                    </binding>
-                                                  </visual>
-                                                </toast>";
+                                              <visual lang='en-US'>
+                                                <binding template='ToastImageAndText01'>
+                                                  <image id='1' src='World' />
+                                                  <text id='1'>Hello</text>
+                                                </binding>
+                                              </visual>
+                                            </toast>";
+
                 //var config = new WnsConfiguration(WnsPackageName, WnsPackageSid, WnsClientSecret);
                 //var broker = new WnsServiceBroker(config);
 
@@ -156,7 +158,7 @@ namespace SamplePushNotificationBroadcaster
                 //progressBar1.Value += 5;
                 //broker.Stop();
 
-                var ret = PostToWns(WnsClientSecret, WnsPackageSid, txtDeviceToken.Text, notificationXMLString, "Toast", "text/xml");
+                var ret = PostToWns(WnsClientSecret, WnsPackageSid, txtDeviceToken.Text, notificationXMLString, "wns/toast", "text/xml");
             }
 
             progressBar1.Value += 5;
@@ -167,16 +169,16 @@ namespace SamplePushNotificationBroadcaster
             progressBar1.Value = 100;
         }
 
-        //private void BrokerOnOnNotificationSucceeded(WnsNotification notification)
-        //{
-        //    Console.WriteLine(notification.ChannelUri, notification.Payload);
-        //}
+        private void BrokerOnOnNotificationSucceeded(WnsNotification notification)
+        {
+            Console.WriteLine(notification.ChannelUri, notification.Payload);
+        }
 
-        //private void BrokerOnOnNotificationFailed(WnsNotification notification, AggregateException exception)
-        //{
-        //    Console.WriteLine(notification.ChannelUri, notification.Payload);
-        //    Console.WriteLine(exception.Message);
-        //}
+        private void BrokerOnOnNotificationFailed(WnsNotification notification, AggregateException exception)
+        {
+            Console.WriteLine(notification.ChannelUri, notification.Payload);
+            Console.WriteLine(exception.Message);
+        }
 
         private void Broker_OnNotificationSucceeded(ApnsNotification notification)
         {
@@ -202,8 +204,162 @@ namespace SamplePushNotificationBroadcaster
             MessageBox.Show(exception.Message, Resources.OnNotificationFailed_Notification_Failed);
         }
 
+        //// Post to WNS
+        //private string PostToWns(string secret, string sid, string uri, string xml, string notificationType, string contentType)
+        //{
+        //    try
+        //    {
+        //        // You should cache this access token.
+        //        var accessToken = GetAccessToken(secret, sid);
+
+        //        byte[] contentInBytes = Encoding.UTF8.GetBytes(xml);
+
+        //        var request = WebRequest.Create(uri) as HttpWebRequest;
+        //        if (request != null)
+        //        {
+        //            request.Method = "POST";
+        //            request.Headers.Add("X-WNS-Type", notificationType);
+        //            request.ContentType = contentType;
+        //            request.Headers.Add("Authorization", $"Bearer {accessToken.AccessToken}");
+
+        //            using (var requestStream = request.GetRequestStream())
+        //                requestStream.Write(contentInBytes, 0, contentInBytes.Length);
+
+        //            using (var webResponse = (HttpWebResponse)request.GetResponse())
+        //                return webResponse.StatusCode.ToString();
+        //        }
+        //    }
+
+        //    catch (WebException webException)
+        //    {
+        //        var status = ((HttpWebResponse)webException.Response).StatusCode;
+
+        //        if (status == HttpStatusCode.Unauthorized)
+        //        {
+        //            // The access token you presented has expired. Get a new one and then try sending
+        //            // your notification again.
+
+        //            // Because your cached access token expires after 24 hours, you can expect to get 
+        //            // this response from WNS at least once a day.
+
+        //            GetAccessToken(secret, sid);
+
+        //            // We recommend that you implement a maximum retry policy.
+        //            return PostToWns(uri, xml, secret, sid, notificationType, contentType);
+        //        }
+        //        else if (status == HttpStatusCode.Gone || status == HttpStatusCode.NotFound)
+        //        {
+        //            // The channel URI is no longer valid.
+
+        //            // Remove this channel from your database to prevent further attempts
+        //            // to send notifications to it.
+
+        //            // The next time that this user launches your app, request a new WNS channel.
+        //            // Your app should detect that its channel has changed, which should trigger
+        //            // the app to send the new channel URI to your app server.
+
+        //            return "";
+        //        }
+        //        if (status == HttpStatusCode.NotAcceptable)
+        //        {
+        //            // This channel is being throttled by WNS.
+
+        //            // Implement a retry strategy that exponentially reduces the amount of
+        //            // notifications being sent in order to prevent being throttled again.
+
+        //            // Also, consider the scenarios that are causing your notifications to be throttled. 
+        //            // You will provide a richer user experience by limiting the notifications you send 
+        //            // to those that add true value.
+
+        //            return "";
+        //        }
+        //        else
+        //        {
+        //            // WNS responded with a less common error. Log this error to assist in debugging.
+
+        //            // You can see a full list of WNS response codes here:
+        //            // http://msdn.microsoft.com/en-us/library/windows/apps/hh868245.aspx#wnsresponsecodes
+
+        //            string[] debugOutput = {
+        //            status.ToString(),
+        //            webException.Response.Headers["X-WNS-Debug-Trace"],
+        //            webException.Response.Headers["X-WNS-Error-Description"],
+        //            webException.Response.Headers["X-WNS-Msg-ID"],
+        //            webException.Response.Headers["X-WNS-Status"]
+        //        };
+        //            return string.Join(" | ", debugOutput);
+        //        }
+
+        //    }
+
+        //    catch (Exception exception)
+        //    {
+        //        MessageBox.Show(exception.Message, Resources.OnNotificationFailed_Notification_Failed);
+        //        return "EXCEPTION: " + exception.Message;
+        //    }
+
+        //    return string.Empty;
+        //}
+
+        //// Authorization
+        //[DataContract]
+        //public class OAuthToken
+        //{
+        //    [DataMember(Name = "access_token")]
+        //    public string AccessToken { get; set; }
+        //    [DataMember(Name = "token_type")]
+        //    public string TokenType { get; set; }
+        //}
+
+        //private OAuthToken GetOAuthTokenFromJson(string jsonString)
+        //{
+        //    using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(jsonString)))
+        //    {
+        //        var ser = new DataContractJsonSerializer(typeof(OAuthToken));
+        //        var oAuthToken = (OAuthToken)ser.ReadObject(ms);
+        //        return oAuthToken;
+        //    }
+        //}
+
+        //private OAuthToken GetAccessToken(string secret, string sid)
+        //{
+        //    var urlEncodedSecret = WebUtility.UrlEncode(secret);
+        //    var urlEncodedSid = WebUtility.UrlEncode(sid);
+
+        //    var body = $"grant_type=client_credentials&client_id={urlEncodedSid}&client_secret={urlEncodedSecret}&scope=notify.windows.com";
+
+        //    string response;
+        //    using (var client = new WebClient())
+        //    {
+        //        client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+        //        response = client.UploadString("https://login.live.com/accesstoken.srf", body);
+        //    }
+        //    return GetOAuthTokenFromJson(response);
+        //}
+
+
+        //public string SendWNS(string uri, string notificationType, string contentType, string accessToken, string xml)
+        //{
+        //    HttpWebRequest request = HttpWebRequest.Create(uri) as HttpWebRequest;
+        //    request.Method = "POST";
+        //    request.Headers.Add("X-WNS-Type", notificationType);
+        //    request.ContentType = contentType;
+        //    request.Headers.Add("Authorization", String.Format("Bearer {0}", accessToken.AccessToken));
+
+        //    byte[] contentInBytes = Encoding.UTF8.GetBytes(xml);
+
+        //    using (Stream requestStream = request.GetRequestStream())
+        //        requestStream.Write(contentInBytes, 0, contentInBytes.Length);
+
+        //    using (HttpWebResponse webResponse = (HttpWebResponse)request.GetResponse())
+        //        return webResponse.StatusCode.ToString();
+
+        //}
+
+
         // Post to WNS
-        private string PostToWns(string secret, string sid, string uri, string xml, string notificationType, string contentType)
+
+        public string PostToWns(string secret, string sid, string uri, string xml, string notificationType, string contentType)
         {
             try
             {
@@ -212,25 +368,25 @@ namespace SamplePushNotificationBroadcaster
 
                 byte[] contentInBytes = Encoding.UTF8.GetBytes(xml);
 
-                var request = WebRequest.Create(uri) as HttpWebRequest;
-                if (request != null)
-                {
-                    request.Method = "POST";
-                    request.Headers.Add("X-WNS-Type", notificationType);
-                    request.ContentType = contentType;
-                    request.Headers.Add("Authorization", $"Bearer {accessToken.AccessToken}");
+                HttpWebRequest request = WebRequest.Create(uri) as HttpWebRequest;
+                request.Method = "POST";
+                request.Headers.Add("X-WNS-Type", notificationType);
+                //request.Headers.Add("X-WNS-RequestForStatus", "true");
+                //request.Headers.Add("Host", "db3.notify.windows.com");
+                request.ContentType = contentType;
+                request.Headers.Add("Authorization", string.Format("Bearer {0}", accessToken.AccessToken));
+                //request.Headers.Add("Content-Length", "500");
 
-                    using (var requestStream = request.GetRequestStream())
-                        requestStream.Write(contentInBytes, 0, contentInBytes.Length);
+                using (Stream requestStream = request.GetRequestStream())
+                    requestStream.Write(contentInBytes, 0, contentInBytes.Length);
 
-                    using (var webResponse = (HttpWebResponse)request.GetResponse())
-                        return webResponse.StatusCode.ToString();
-                }
+                using (HttpWebResponse webResponse = (HttpWebResponse)request.GetResponse())
+                    return webResponse.StatusCode.ToString();
             }
 
             catch (WebException webException)
             {
-                var status = ((HttpWebResponse)webException.Response).StatusCode;
+                HttpStatusCode status = ((HttpWebResponse)webException.Response).StatusCode;
 
                 if (status == HttpStatusCode.Unauthorized)
                 {
@@ -245,7 +401,7 @@ namespace SamplePushNotificationBroadcaster
                     // We recommend that you implement a maximum retry policy.
                     return PostToWns(uri, xml, secret, sid, notificationType, contentType);
                 }
-                if (status == HttpStatusCode.Gone || status == HttpStatusCode.NotFound)
+                else if (status == HttpStatusCode.Gone || status == HttpStatusCode.NotFound)
                 {
                     // The channel URI is no longer valid.
 
@@ -258,7 +414,7 @@ namespace SamplePushNotificationBroadcaster
 
                     return "";
                 }
-                if (status == HttpStatusCode.NotAcceptable)
+                else if (status == HttpStatusCode.NotAcceptable)
                 {
                     // This channel is being throttled by WNS.
 
@@ -271,31 +427,68 @@ namespace SamplePushNotificationBroadcaster
 
                     return "";
                 }
-                // WNS responded with a less common error. Log this error to assist in debugging.
+                else
+                {
+                    // WNS responded with a less common error. Log this error to assist in debugging.
 
-                // You can see a full list of WNS response codes here:
-                // http://msdn.microsoft.com/en-us/library/windows/apps/hh868245.aspx#wnsresponsecodes
+                    // You can see a full list of WNS response codes here:
+                    // http://msdn.microsoft.com/en-us/library/windows/apps/hh868245.aspx#wnsresponsecodes
 
-                string[] debugOutput = {
-                    status.ToString(),
-                    webException.Response.Headers["X-WNS-Debug-Trace"],
-                    webException.Response.Headers["X-WNS-Error-Description"],
-                    webException.Response.Headers["X-WNS-Msg-ID"],
-                    webException.Response.Headers["X-WNS-Status"]
-                };
-                return string.Join(" | ", debugOutput);
+                    string[] debugOutput = {
+                                       status.ToString(),
+                                       webException.Response.Headers["X-WNS-Debug-Trace"],
+                                       webException.Response.Headers["X-WNS-Error-Description"],
+                                       webException.Response.Headers["X-WNS-Msg-ID"],
+                                       webException.Response.Headers["X-WNS-Status"]
+                                   };
+                    return string.Join(" | ", debugOutput);
+                }
             }
 
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                MessageBox.Show(exception.Message, Resources.OnNotificationFailed_Notification_Failed);
-                return "EXCEPTION: " + exception.Message;
+                return "EXCEPTION: " + ex.Message;
             }
-
-            return string.Empty;
         }
 
         // Authorization
+        //[DataContract]
+        //public class OAuthToken
+        //{
+        //    [DataMember(Name = "access_token")]
+        //    public string AccessToken { get; set; }
+        //    [DataMember(Name = "token_type")]
+        //    public string TokenType { get; set; }
+        //}
+
+        //private OAuthToken GetOAuthTokenFromJson(string jsonString)
+        //{
+        //    using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(jsonString)))
+        //    {
+        //        var ser = new DataContractJsonSerializer(typeof(OAuthToken));
+        //        var oAuthToken = (OAuthToken)ser.ReadObject(ms);
+        //        return oAuthToken;
+        //    }
+        //}
+
+        //protected OAuthToken GetAccessToken(string secret, string sid)
+        //{
+        //    var urlEncodedSecret = HttpUtility.UrlEncode(secret);
+        //    var urlEncodedSid = HttpUtility.UrlEncode(sid);
+
+        //    var body = String.Format("grant_type=client_credentials&client_id={0}&client_secret={1}&scope=notify.windows.com",
+        //                             urlEncodedSid,
+        //                             urlEncodedSecret);
+
+        //    string response;
+        //    using (var client = new WebClient())
+        //    {
+        //        client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+        //        response = client.UploadString("https://login.live.com/accesstoken.srf", body);
+        //    }
+        //    return GetOAuthTokenFromJson(response);
+        //}
+
         [DataContract]
         public class OAuthToken
         {
@@ -315,12 +508,13 @@ namespace SamplePushNotificationBroadcaster
             }
         }
 
-        private OAuthToken GetAccessToken(string secret, string sid)
+        protected OAuthToken GetAccessToken(string secret, string sid)
         {
-            var urlEncodedSecret = WebUtility.UrlEncode(secret);
-            var urlEncodedSid = WebUtility.UrlEncode(sid);
+            var urlEncodedSecret = HttpUtility.UrlEncode(secret);
+            var urlEncodedSid = HttpUtility.UrlEncode(sid);
 
-            var body = $"grant_type=client_credentials&client_id={urlEncodedSid}&client_secret={urlEncodedSecret}&scope=notify.windows.com";
+            var body =
+                $"grant_type=client_credentials&client_id={urlEncodedSid}&client_secret={urlEncodedSecret}&scope=notify.windows.com";
 
             string response;
             using (var client = new WebClient())
@@ -330,5 +524,8 @@ namespace SamplePushNotificationBroadcaster
             }
             return GetOAuthTokenFromJson(response);
         }
+
+
+
     }
 }
