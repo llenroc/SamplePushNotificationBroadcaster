@@ -130,7 +130,7 @@ namespace SamplePushNotificationBroadcaster
             }
             else if (rbWindows.Checked)
             {
-                var customParameters = HttpUtility.UrlEncode($"/MainPage.xaml?jobId={txtJobId.Text}&userId={txtUserId.Text}");
+                var customParameters = "/MainPage.xaml?" + HttpUtility.UrlEncode($"jobId={txtJobId.Text}&userId={txtUserId.Text}");
                 var notificationXmlString = @"<toast launch='" + customParameters + $@"'>
                                               <visual lang='en-US'>
                                                 <binding template='ToastImageAndText02'>
